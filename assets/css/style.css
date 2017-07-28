@@ -1,0 +1,31 @@
+body {
+  color: white;
+  background-color: rgb(25, 41, 66);
+}
+
+.cont-img {
+  background-image: url("../images/hixs_pattern_evolution.png");
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+
+.pulse {
+  -webkit-animation: pulse 20s ease-out;
+  -webkit-animation-iteration-count: infinite; 
+  opacity: 0.5;
+}
+
+@-webkit-keyframes pulse {
+  0% { 
+    opacity: 0.5;
+    color: white;
+  }
+  50% { 
+    opacity: 1.0;
+    color: rgb(82, 138, 229);
+  }
+  100% { 
+    opacity: 0.5;
+    color: white;
+  }
+}
