@@ -10,7 +10,7 @@ body {
 }
 
 .pulse {
-  -webkit-animation: pulse 20s ease-out;
+  -webkit-animation: pulse 3s ease-out;
   -webkit-animation-iteration-count: infinite; 
   opacity: 0.5;
 }
