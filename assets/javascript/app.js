@@ -94,5 +94,5 @@ $(document).ready(function () {
         $("#portkey-table > tbody").append("<tr><td>" + portName + "</td><td>" + portDest + "</td><td>" + portFreq + "</td><td>" + portNextConv + "</td><td>" + minAway + "</td></tr>");
       });
     });
-  }, 1000 * (60 - moment().seconds()));
+  }, 1000 * 60);
 });
