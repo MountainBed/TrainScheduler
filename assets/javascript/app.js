@@ -56,9 +56,9 @@ $(document).ready(function () {
     var remainderTime = diffTime % portFreq;
     var untilTime = portFreq - remainderTime;
 
-    var portNext = moment().add(untilTime, "minutes");
+    var portNext = Math.floor(moment().add(untilTime, "minutes"));
     var portNextConv = moment(portNext).format("hh:mm A");
-    var minAway = moment(portNext).diff(moment(), "minutes");
+    var minAway = Math.ceil(moment(portNext).diff(moment(), "minutes"));
 
     if (diffTime <= 0) {
       portNextConv = moment(portFirst).format("hh:mm A");
@@ -82,9 +82,9 @@ $(document).ready(function () {
         var remainderTime = diffTime % portFreq;
         var untilTime = portFreq - remainderTime;
 
-        var portNext = moment().add(untilTime, "minutes");
+        var portNext = Math.floor(moment().add(untilTime, "minutes"));
         var portNextConv = moment(portNext).format("hh:mm A");
-        var minAway = moment(portNext).diff(moment(), "minutes");
+        var minAway = Math.ceil(moment(portNext).diff(moment(), "minutes"));
 
         if (diffTime <= 0) {
           portNextConv = moment(portFirst).format("hh:mm A");
