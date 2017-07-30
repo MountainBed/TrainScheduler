@@ -20,22 +20,28 @@ $(document).ready(function () {
     var portDest = $("#destination-input").val().trim();
     var portFirst = moment($("#first-input").val().trim(), "HH:mm").format("");
     var portFreq = $("#freq-input").val().trim();
+    var regex = /([01]\d|2[0-3]):([0-5]\d)/;
 
-    var portObj = {
-      name: portName,
-      destination: portDest,
-      first: portFirst,
-      frequency: portFreq
-    };
+    if (regex.test(portFirst)) {
+      var portObj = {
+        name: portName,
+        destination: portDest,
+        first: portFirst,
+        frequency: portFreq
+      };
 
-    database.ref().push(portObj);
+      database.ref().push(portObj);
 
-    alert("New portkey has been registered!");
+      $("#portkey-name-input").val("");
+      $("#destination-input").val("");
+      $("#first-input").val("");
+      $("#freq-input").val("");
 
-    $("#portkey-name-input").val("");
-    $("#destination-input").val("");
-    $("#first-input").val("");
-    $("#freq-input").val("");
+      alert("New portkey has been registered!");
+    } else {
+      alert("First Portkey is not a valid time. Please enter your time in military time.");
+      $("#first-input").val("");
+    }
   });
 
   database.ref().on("child_added", function (childSnapshot, prevChildKey) {
@@ -45,6 +51,7 @@ $(document).ready(function () {
     var portFreq = childSnapshot.val().frequency;
 
     var diffTime = moment().diff(moment(portFirst), "minutes");
+    console.log(diffTime);
 
     var remainderTime = diffTime % portFreq;
     var untilTime = portFreq - remainderTime;
@@ -53,6 +60,11 @@ $(document).ready(function () {
     var portNextConv = moment(portNext).format("hh:mm A");
 
     var minAway = moment(portNext).diff(moment(), "minutes");
+
+    if (diffTime <= 0) {
+      portNextConv = moment(portFirst).format("hh:mm A");
+      minAway = Math.abs(diffTime);
+    }
 
     $("#portkey-table > tbody").append("<tr><td>" + portName + "</td><td>" + portDest + "</td><td>" + portFreq + "</td><td>" + portNextConv + "</td><td>" + minAway + "</td></tr>");
   });
