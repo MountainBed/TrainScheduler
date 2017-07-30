@@ -1,5 +1,4 @@
 $(document).ready(function () {
-// Initialize Firebase
   var config = {
     apiKey: "AIzaSyDhSiPM4j-ZFEtJ8UktDeMuB6BJwdTfYio",
     authDomain: "portkey-pass-scheduler.firebaseapp.com",
@@ -12,7 +11,9 @@ $(document).ready(function () {
   firebase.initializeApp(config);
 
   var database = firebase.database();
+  var query = firebase.database().ref().orderByKey();
 
+  // Reads event for user submition, adds values to firebase database
   $("#submit-port").on("click", function (event) {
     event.preventDefault();
 
@@ -44,6 +45,7 @@ $(document).ready(function () {
     }
   });
 
+  // Detects when values are added to firebase database, updates table
   database.ref().on("child_added", function (childSnapshot, prevChildKey) {
     var portName = childSnapshot.val().name;
     var portDest = childSnapshot.val().destination;
@@ -51,14 +53,11 @@ $(document).ready(function () {
     var portFreq = childSnapshot.val().frequency;
 
     var diffTime = moment().diff(moment(portFirst), "minutes");
-    console.log(diffTime);
-
     var remainderTime = diffTime % portFreq;
     var untilTime = portFreq - remainderTime;
 
     var portNext = moment().add(untilTime, "minutes");
     var portNextConv = moment(portNext).format("hh:mm A");
-
     var minAway = moment(portNext).diff(moment(), "minutes");
 
     if (diffTime <= 0) {
@@ -68,4 +67,32 @@ $(document).ready(function () {
 
     $("#portkey-table > tbody").append("<tr><td>" + portName + "</td><td>" + portDest + "</td><td>" + portFreq + "</td><td>" + portNextConv + "</td><td>" + minAway + "</td></tr>");
   });
+
+  // Runs every minute and will update entire table
+  setInterval(function () {
+    $("#portkeyarea").empty();
+    query.once("value", function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        var portName = childSnapshot.val().name;
+        var portDest = childSnapshot.val().destination;
+        var portFirst = childSnapshot.val().first;
+        var portFreq = childSnapshot.val().frequency;
+
+        var diffTime = moment().diff(moment(portFirst), "minutes");
+        var remainderTime = diffTime % portFreq;
+        var untilTime = portFreq - remainderTime;
+
+        var portNext = moment().add(untilTime, "minutes");
+        var portNextConv = moment(portNext).format("hh:mm A");
+        var minAway = moment(portNext).diff(moment(), "minutes");
+
+        if (diffTime <= 0) {
+          portNextConv = moment(portFirst).format("hh:mm A");
+          minAway = Math.abs(diffTime);
+        }
+
+        $("#portkey-table > tbody").append("<tr><td>" + portName + "</td><td>" + portDest + "</td><td>" + portFreq + "</td><td>" + portNextConv + "</td><td>" + minAway + "</td></tr>");
+      });
+    });
+  }, 1000 * (60 - moment().seconds()));
 });
